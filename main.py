@@ -21,6 +21,7 @@ import base64
 import os
 import json
 import hashlib
+import tkinter.messagebox
 
 # Ana pencere sınıfı
 class NetworkApp(tk.Tk):
@@ -32,6 +33,15 @@ class NetworkApp(tk.Tk):
         # Ana menü çerçevesi
         self.main_frame = ttk.Frame(self)
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        # Ana menüyü oluştur
+        self.create_main_menu()
+    
+    def create_main_menu(self):
+        """Ana menüyü oluşturur"""
+        # Önceki widget'ları temizle
+        for widget in self.main_frame.winfo_children():
+            widget.destroy()
         
         # Başlık etiketi
         ttk.Label(self.main_frame, text="Güvenli Dosya Transfer ve Ağ Analizi Sistemi", 
@@ -60,17 +70,15 @@ class NetworkApp(tk.Tk):
         # Alt bilgi
         ttk.Label(self.main_frame, text="© 2025 Ağ Güvenliği Projesi", 
                  font=("Arial", 8)).pack(side="bottom", pady=10)
-        
-        # Alt çerçeveleri tanımla (pencereler arası geçiş için)
-        self.frames = {}
-        
+    
     def clear_main_frame(self):
+        """Ana frame'i temizler"""
         for widget in self.main_frame.winfo_children():
             widget.destroy()
     
     def back_to_main(self):
-        self.clear_main_frame()
-        self.__init__()
+        """Ana menüye geri döner - düzeltilmiş versiyon"""
+        self.create_main_menu()
     
     def open_server(self):
         self.clear_main_frame()
@@ -757,12 +765,14 @@ class ClientFrame:
             self.log(f"Özel paket gönderme hatası: {e}")
     
     def is_admin(self):
+        """Yönetici hakları kontrolü"""
         try:
             return ctypes.windll.shell32.IsUserAnAdmin()
         except:
             return False
     
     def calculate_checksum(self, data):
+        """IP checksum hesaplar"""
         checksum = 0
         for i in range(0, len(data), 2):
             word = (data[i] << 8) + (data[i+1] if i+1 < len(data) else 0)
@@ -1290,19 +1300,21 @@ class InjectionFrame:
         finally:
             self.inject_btn.config(state="normal")
 
-def is_admin(self):
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-        
-def calculate_checksum(self, data):
-    checksum = 0
-    for i in range(0, len(data), 2):
-        word = (data[i] << 8) + (data[i+1] if i+1 < len(data) else 0)
-        checksum += word
-        checksum = (checksum >> 16) + (checksum & 0xffff)
-    return ~checksum & 0xffff
+    def is_admin(self):
+        """Yönetici hakları kontrolü"""
+        try:
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        except:
+            return False
+    
+    def calculate_checksum(self, data):
+        """IP checksum hesaplar"""
+        checksum = 0
+        for i in range(0, len(data), 2):
+            word = (data[i] << 8) + (data[i+1] if i+1 < len(data) else 0)
+            checksum += word
+            checksum = (checksum >> 16) + (checksum & 0xffff)
+        return ~checksum & 0xffff
 
 # Add this class after your other frame classes
 
